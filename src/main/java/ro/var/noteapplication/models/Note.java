@@ -10,6 +10,7 @@ public class Note {
     private String body;
     private long creationDate;
     private long modificationDate;
+    private boolean markAsFinished;
     private List<String> hashtagList = new ArrayList<>();
 
     public Note() {
@@ -20,6 +21,7 @@ public class Note {
         this.body = body;
         this.creationDate = System.currentTimeMillis();
         this.modificationDate = System.currentTimeMillis();
+        this.markAsFinished=false;
         this.hashtagList = null;
     }
 
@@ -28,6 +30,16 @@ public class Note {
         this.body = body;
         this.creationDate = System.currentTimeMillis();
         this.modificationDate = System.currentTimeMillis();
+        this.markAsFinished=false;
+        this.hashtagList = hashtagList;
+    }
+
+    public Note(String title, String body, long creationDate, long modificationDate, boolean markAsFinished, List<String> hashtagList) {
+        this.title = title;
+        this.body = body;
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
+        this.markAsFinished = markAsFinished;
         this.hashtagList = hashtagList;
     }
 
@@ -59,6 +71,14 @@ public class Note {
         return hashtagList;
     }
 
+    public boolean isMarkAsFinished() {
+        return markAsFinished;
+    }
+
+    public void setMarkAsFinished(boolean markAsFinished) {
+        this.markAsFinished = markAsFinished;
+    }
+
     public void setHashtagList(List<String> hashtagList) {
         this.hashtagList = hashtagList;
     }
@@ -67,10 +87,11 @@ public class Note {
     @Override
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        return "Note " + title + "\n" +
+        return  title + "\n" +
                 "Created on " + sdf.format(creationDate) + "\n" +
                 "Last modified on" + sdf.format(modificationDate) + "\n" +
                 body + "\n" +
-                "Hashtags " + hashtagList.toString() + ".";
+                "Note is marked as done :"+markAsFinished+"\n"+
+                "Hashtags " + hashtagList.toString() + "."+"\n\n";
     }
 }
