@@ -1,44 +1,31 @@
 package ro.var.noteapplication;
 
 import ro.var.noteapplication.models.Note;
+import ro.var.noteapplication.models.NoteApp;
 import ro.var.noteapplication.services.IOService;
 import ro.var.noteapplication.services.IOServiceImpl;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Main {
 
+   private static final File getNotesFileForReading = new File(Objects.requireNonNull(Main.class.getClassLoader().getResource("notes.json")).getFile());
+   private static final File getNotesFileForWriting = new File("src/main/resources/notes.json");
+
     public static void main(String[] args) {
 
-        File getNotesFileForReading = new File(Objects.requireNonNull(Main.class.getClassLoader().getResource("notes.json")).getFile());
-        File getNotesFileForWriting = new File("src/main/resources/notes.json");
-
-        //added if-else for windows users -> getResource() inserts "%20" in blank spaces path
+        IOService ioService = new IOServiceImpl();
 
         if (getNotesFileForReading.getPath().contains("%20")){
             String correctPath = getNotesFileForReading.getPath().replace("%20", " ");
             File notesFileCorrectPath=new File(correctPath);
-            IOService readWriteService = new IOServiceImpl();
-            List<Note> noteList = new ArrayList<>(readWriteService.readFile(notesFileCorrectPath));
-
-            //testing reading file
-            System.out.println("Before edit:");
-            noteList.stream().forEach(note-> System.out.println(note));
-
-
-            //editing first note's title and writing it to notes.json
-            System.out.println("After editing:");
-            noteList.get(0).setTitle("Note application!");
-            readWriteService.writeFile(noteList,getNotesFileForWriting);
-            noteList.stream().forEach(note-> System.out.println(note));
+            NoteApp noteApp=new NoteApp(ioService.readFile(notesFileCorrectPath), getNotesFileForWriting);
+            noteApp.openNoteApp();
 
         }else {
-            IOService readWriteService = new IOServiceImpl();
-            List<Note> noteList = new ArrayList<>(readWriteService.readFile(getNotesFileForReading));
-            noteList.forEach(System.out::println);
+           NoteApp noteApp=new NoteApp(ioService.readFile(getNotesFileForReading), getNotesFileForWriting);
+           noteApp.openNoteApp();
         }
     }
 
