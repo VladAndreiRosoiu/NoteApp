@@ -59,6 +59,10 @@ public class Note {
         this.body = body;
     }
 
+    public long getCreationDate(){
+        return this.creationDate;
+    }
+
     public long getModificationDate() {
         return modificationDate;
     }
