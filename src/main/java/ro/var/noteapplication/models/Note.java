@@ -21,7 +21,7 @@ public class Note {
         this.body = body;
         this.creationDate = System.currentTimeMillis();
         this.modificationDate = System.currentTimeMillis();
-        this.markAsFinished=false;
+        this.markAsFinished = false;
         this.hashtagList = null;
     }
 
@@ -30,7 +30,7 @@ public class Note {
         this.body = body;
         this.creationDate = System.currentTimeMillis();
         this.modificationDate = System.currentTimeMillis();
-        this.markAsFinished=false;
+        this.markAsFinished = false;
         this.hashtagList = hashtagList;
     }
 
@@ -59,7 +59,7 @@ public class Note {
         this.body = body;
     }
 
-    public long getCreationDate(){
+    public long getCreationDate() {
         return this.creationDate;
     }
 
@@ -90,12 +90,12 @@ public class Note {
 
     @Override
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        return  title + "\n" +
-                "Created on " + sdf.format(creationDate) + "\n" +
-                "Last modified on" + sdf.format(modificationDate) + "\n" +
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a | dd-MM-yyyy ");
+        return title + "\n" +
+                "Created on: " + sdf.format(creationDate) + "\n" +
+                "Last modified on: " + sdf.format(modificationDate) + "\n" +
                 body + "\n" +
-                "Note is marked as done :"+markAsFinished+"\n"+
-                "Hashtags " + hashtagList.toString() + "."+"\n\n";
+                "Note is marked as done: " + markAsFinished + "\n" +
+                "Hashtags " + hashtagList.toString() + "." + "\n\n";
     }
 }

@@ -1,75 +1,252 @@
 package ro.var.noteapplication.models;
 
-import org.w3c.dom.ls.LSOutput;
 import ro.var.noteapplication.services.IOService;
 import ro.var.noteapplication.services.IOServiceImpl;
+import ro.var.noteapplication.services.SortingService;
+import ro.var.noteapplication.services.SortingServiceImpl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class NoteApp {
-    private List<Note> noteList;
-    private File notesFile;
-    IOService ioService=new IOServiceImpl();
-    private Scanner scanner=new Scanner(System.in);
+    private final List<Note> noteList;
+    private final File notesFile;
+    private final IOService ioService = new IOServiceImpl();
+    private final SortingService sortingService = new SortingServiceImpl();
+    private final Scanner scanner = new Scanner(System.in);
 
-    public NoteApp(List<Note> noteList, File notesFile){
-        this.noteList=noteList;
-        this.notesFile=notesFile;
+    public NoteApp(List<Note> noteList, File notesFile) {
+        this.noteList = noteList;
+        this.notesFile = notesFile;
     }
 
-    public void openNoteApp(){
+    public void openNoteApp() {
         do {
+            printNoteAppHeader();
             printNoteAppMainMenu();
-            int option=scanner.nextInt();
-            switch (option){
+            int option = scanner.nextInt();
+            switch (option) {
                 case 1:
                     //TODO
-                    System.out.println("1");
+                    takeNewNote();
+                    ioService.writeFile(noteList, notesFile);
                     break;
                 case 2:
                     //TODO
-                    System.out.println("2");
+                    displayNotes();
                     break;
                 case 3:
                     //TODO
-                    System.out.println("3");
+                    editNote();
+                    ioService.writeFile(noteList,notesFile);
                     break;
                 case 4:
                     //TODO
-                    System.out.println("4");
-                    break;
-                case 5:
-                    //TODO
-                    System.out.println("5");
-                    break;
-                case 6:
-                    //TODO
-                    System.out.println("6");
-                    break;
-                case 7:
-                    //TODO
-                    System.out.println("7");
+                    System.exit(0);
                     break;
                 default:
                     //TODO
                     System.out.println("default");
                     break;
             }
-        }while (true);
+        } while (true);
     }
 
-    private void printNoteAppHeader(){
+    private void printNoteAppHeader() {
         System.out.println("--------------------------");
         System.out.println("|    Note Application    |");
         System.out.println("--------------------------");
     }
 
-    private void printNoteAppMainMenu(){}
+    private void printNoteAppMainMenu() {
+        System.out.println("1 - Take a new note");
+        System.out.println("2 - Display notes");
+        System.out.println("3 - Edit note");
+        System.out.println("4 - Exit application");
+        System.out.println("Please enter an option:");
+    }
 
-    private void printNoteAppDisplayMenu(){}
+    private void printNoteAppDisplayMenu() {
+        System.out.println("Display menu");
+        System.out.println("1 - Display notes by creation date(latest first)");
+        System.out.println("2 - Display notes by creation date(oldest first)");
+        System.out.println("3 - Display notes by edit date(latest first)");
+        System.out.println("4 - Display notes by edit date(oldest first)");
+        System.out.println("5 - Display unfinished notes");
+        System.out.println("6 - Return to main menu");
+        System.out.println("Please enter an option:");
+    }
 
-    private void printNoteEditMenu(){}
+    private void printNoteEditMenu() {
+        System.out.println("Edit menu");
+        System.out.println("1 - Edit title");
+        System.out.println("2 - Edit body");
+        System.out.println("3 - Edit hashtag list");
+        System.out.println("4 - Return to main menu");
+        System.out.println("Please enter an option:");
+    }
+
+    private void printSearchMenu() {
+        System.out.println("Search menu");
+        System.out.println("1 - Search by title");
+        System.out.println("2 - Search by hashtag");
+        System.out.println("3 - Search by keyword");
+        System.out.println("4 - Return to main menu");
+        System.out.println("Please enter an option:");
+    }
+
+    private void takeNewNote() {
+        System.out.println("Please enter note title:");
+        scanner.skip("\n");
+        String title = scanner.nextLine();
+        System.out.println("Please enter note body:");
+        String body = scanner.nextLine();
+        List<String> hashtagList = new ArrayList<>();
+        System.out.println("Please enter hashtag/s:");
+        String hashtag = scanner.nextLine();
+        hashtagList.addAll(Arrays.asList(hashtag.split("#")));
+        noteList.add(new Note(title, body, System.currentTimeMillis(), System.currentTimeMillis(), false, hashtagList));
+
+//        String[] hashtags = input.nextLine().replace(" ", "").split(",");
+//        for (int i = 0; i < hashtags.length; i++) {
+//        hashtags[i] = "#" + hashtags[i];
+//        }
+    }
+
+    private void displayNotes() {
+        printNoteAppDisplayMenu();
+        int option = scanner.nextInt();
+        switch (option) {
+            case 1:
+                printNotes(sortingService.latestNotesFirst(noteList));
+                break;
+            case 2:
+                printNotes(sortingService.oldestNotesFirst(noteList));
+                break;
+            case 3:
+                printNotes(sortingService.latestEditedNotesFirst(noteList));
+                break;
+            case 4:
+                printNotes(sortingService.oldestEditedNotesFirst(noteList));
+                break;
+            case 5:
+                printNotes(sortingService.unfinishedNotes(noteList));
+            case 6:
+                openNoteApp();
+                break;
+            default:
+                System.out.println("Error");
+        }
+    }
+
+    private void printNotes(List<Note> notes) {
+        notes.forEach(System.out::println);
+    }
+
+    private List<Note> searchNoteByTitle(String keyword) {
+        return new ArrayList<>(noteList.stream().filter(note -> note.getTitle().contains(keyword)).collect(Collectors.toSet()));
+    }
+
+    private List<Note> searchNoteByKeyword(String keyword) {
+        return new ArrayList<>(noteList.stream().filter(note -> note.getBody().contains(keyword)).collect(Collectors.toSet()));
+    }
+
+    private List<Note> searchNoteByHashtag(String keyword) {
+        List<Note> tempList=new ArrayList<>();
+        for (Note note : noteList) {
+            for (String hashtag : note.getHashtagList()) {
+                if (hashtag.equalsIgnoreCase(keyword)) {
+                    tempList.add(note);
+                } else {
+                    System.out.println("Your search didn't returned anything!");
+                }
+            }
+        }
+        return tempList;
+    }
+
+    private void editNoteTitle(Note note, String title) {
+        note.setTitle(title);
+        note.setModificationDate(System.currentTimeMillis());
+    }
+
+    private void editNoteBody(Note note, String body) {
+        note.setBody(body);
+        note.setModificationDate(System.currentTimeMillis());
+    }
+
+    private void editHashtag(Note note, String hashtag) {
+        List<String> hashtags = new ArrayList<>(Arrays.asList(hashtag.split("#")));
+        note.setHashtagList(hashtags);
+        note.setModificationDate(System.currentTimeMillis());
+    }
+
+    private Note selectNote(List<Note> notes) {
+        for (int i = 0; i < notes.size(); i++) {
+            System.out.println((i + 1) + notes.get(0).getTitle());
+        }
+        System.out.println("Please select one note:");
+        int selectedNote = scanner.nextInt();
+        return notes.get(selectedNote - 1);
+    }
+
+    private List<Note> searchNotes(){
+        printSearchMenu();
+        int option= scanner.nextInt();
+        String keyword;
+        switch (option){
+            case 1:
+                System.out.println("Please enter title to search");
+                keyword=scanner.nextLine();
+                return searchNoteByTitle(keyword);
+            case 2:
+                System.out.println("Please enter hashtag to search");
+                keyword=scanner.nextLine();
+                return searchNoteByHashtag(keyword);
+            case 3:
+                System.out.println("Please enter keyword to search");
+                keyword=scanner.nextLine();
+                return searchNoteByKeyword(keyword);
+            case 4:
+                openNoteApp();
+            default:
+                System.out.println("default");
+        }
+        return null;
+    }
+
+    private void editNote(){
+        Note currentNote=selectNote(searchNotes());
+        printNoteEditMenu();
+        int option=scanner.nextInt();
+        String keyword;
+        switch (option){
+            case 1:
+                System.out.println("Please enter new title");
+                keyword=scanner.nextLine();
+                editNoteTitle(currentNote,keyword);
+                break;
+            case 2:
+                System.out.println("Please enter new body");
+                keyword=scanner.nextLine();
+                editNoteBody(currentNote,keyword);
+                break;
+            case 3:
+                System.out.println("Please enter hashtags");
+                keyword=scanner.nextLine();
+                editHashtag(currentNote,keyword);
+                break;
+            case 4:
+                openNoteApp();
+                break;
+            default:
+                System.out.println("Error");
+        }
+
+    }
 
 }

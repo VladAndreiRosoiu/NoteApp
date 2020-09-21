@@ -37,28 +37,31 @@ public class IOServiceImpl implements IOService {
     }
 
     @Override
-    public void writeFile(List<Note> noteList,File file) {
-        JSONArray jsonArray=new JSONArray();
+    public void writeFile(List<Note> noteList, File file) {
+        Runnable runnable = () -> {
+            JSONArray jsonArray = new JSONArray();
+            try (FileWriter writer = new FileWriter(file)) {
+                for (Note note : noteList) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("title", note.getTitle());
+                    jsonObject.put("body", note.getBody());
+                    jsonObject.put("creationDate", note.getCreationDate());
+                    jsonObject.put("modificationDate", note.getModificationDate());
+                    jsonObject.put("markAsFinished", note.isMarkAsFinished());
+                    jsonObject.put("hashtagList", note.getHashtagList());
+                    jsonArray.add(jsonObject);
+                }
 
-        try(FileWriter writer=new FileWriter(file)) {
-            for(Note note:noteList){
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("title", note.getTitle());
-                jsonObject.put("body", note.getBody());
-                jsonObject.put("creationDate", note.getCreationDate());
-                jsonObject.put("modificationDate", note.getModificationDate());
-                jsonObject.put("markAsFinished", note.isMarkAsFinished());
-                jsonObject.put("hashtagList", note.getHashtagList());
-                jsonArray.add(jsonObject);
+                writer.write(jsonArray.toJSONString());
+                writer.flush();
+                writer.close();
+                System.out.println("Writing done! Success");
+
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
-
-            writer.write(jsonArray.toJSONString());
-            writer.flush();
-            writer.close();
-            System.out.println("Writing done! Success");
-
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
+        };
+        Thread writeThread = new Thread(runnable);
+        writeThread.start();
     }
 }
