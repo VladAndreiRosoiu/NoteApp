@@ -3,6 +3,7 @@ package ro.var.noteapplication.models;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Note {
 
@@ -97,5 +98,23 @@ public class Note {
                 body + "\n" +
                 "Note is marked as done: " + markAsFinished + "\n" +
                 "Hashtags " + hashtagList.toString() + "." + "\n\n";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note = (Note) o;
+        return creationDate == note.creationDate &&
+                modificationDate == note.modificationDate &&
+                markAsFinished == note.markAsFinished &&
+                Objects.equals(title, note.title) &&
+                Objects.equals(body, note.body) &&
+                Objects.equals(hashtagList, note.hashtagList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, body, creationDate, modificationDate, markAsFinished, hashtagList);
     }
 }

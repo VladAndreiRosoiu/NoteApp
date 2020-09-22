@@ -15,7 +15,6 @@ public class Main {
     public static void main(String[] args) {
 
         IOService ioService = new IOServiceImpl();
-
         if (getNotesFileForReading.getPath().contains("%20")) {
             String correctPath = getNotesFileForReading.getPath().replace("%20", " ");
             File notesFileCorrectPath = new File(correctPath);

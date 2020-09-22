@@ -54,9 +54,6 @@ public class IOServiceImpl implements IOService {
 
                 writer.write(jsonArray.toJSONString());
                 writer.flush();
-                writer.close();
-                System.out.println("Writing done! Success");
-
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

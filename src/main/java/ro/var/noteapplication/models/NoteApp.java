@@ -6,10 +6,7 @@ import ro.var.noteapplication.services.SortingService;
 import ro.var.noteapplication.services.SortingServiceImpl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NoteApp {
@@ -17,7 +14,7 @@ public class NoteApp {
     private final File notesFile;
     private final IOService ioService = new IOServiceImpl();
     private final SortingService sortingService = new SortingServiceImpl();
-    private final Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
     public NoteApp(List<Note> noteList, File notesFile) {
         this.noteList = noteList;
@@ -25,35 +22,44 @@ public class NoteApp {
     }
 
     public void openNoteApp() {
-        do {
-            printNoteAppHeader();
-            printNoteAppMainMenu();
-            int option = scanner.nextInt();
-            switch (option) {
-                case 1:
-                    //TODO
-                    takeNewNote();
-                    ioService.writeFile(noteList, notesFile);
-                    break;
-                case 2:
-                    //TODO
-                    displayNotes();
-                    break;
-                case 3:
-                    //TODO
-                    editNote();
-                    ioService.writeFile(noteList,notesFile);
-                    break;
-                case 4:
-                    //TODO
-                    System.exit(0);
-                    break;
-                default:
-                    //TODO
-                    System.out.println("default");
-                    break;
-            }
-        } while (true);
+        try {
+            do {
+                printNoteAppHeader();
+                printNoteAppMainMenu();
+                int option = scanner.nextInt();
+                switch (option) {
+                    case 1:
+                        //TODO - try catch
+                        addNewNote();
+                        ioService.writeFile(noteList, notesFile);
+                        break;
+                    case 2:
+                        //TODO - try catch
+                        displayNotes();
+                        break;
+                    case 3:
+                        //TODO - search note
+                    case 4:
+                        //TODO - try catch
+                        editNote();
+                        ioService.writeFile(noteList, notesFile);
+                        break;
+                    case 5:
+                        //TODO - try catch
+                        System.exit(0);
+                        break;
+                    default:
+                        //TODO - try catch
+                        System.out.println("Please choose between [1-4] only!");
+                        openNoteApp();
+                        break;
+                }
+            } while (true);
+        } catch (InputMismatchException e) {
+            System.out.println("Please choose between [1-4] only!");
+            scanner = new Scanner(System.in);
+            openNoteApp();
+        }
     }
 
     private void printNoteAppHeader() {
@@ -65,8 +71,9 @@ public class NoteApp {
     private void printNoteAppMainMenu() {
         System.out.println("1 - Take a new note");
         System.out.println("2 - Display notes");
-        System.out.println("3 - Edit note");
-        System.out.println("4 - Exit application");
+        System.out.println("3 - Search note");
+        System.out.println("4 - Edit note");
+        System.out.println("5 - Exit application");
         System.out.println("Please enter an option:");
     }
 
@@ -86,7 +93,8 @@ public class NoteApp {
         System.out.println("1 - Edit title");
         System.out.println("2 - Edit body");
         System.out.println("3 - Edit hashtag list");
-        System.out.println("4 - Return to main menu");
+        System.out.println("4 - Delete note");
+        System.out.println("5 - Return to main menu");
         System.out.println("Please enter an option:");
     }
 
@@ -99,17 +107,18 @@ public class NoteApp {
         System.out.println("Please enter an option:");
     }
 
-    private void takeNewNote() {
+    private void addNewNote() {
         System.out.println("Please enter note title:");
         scanner.skip("\n");
         String title = scanner.nextLine();
         System.out.println("Please enter note body:");
         String body = scanner.nextLine();
-        List<String> hashtagList = new ArrayList<>();
         System.out.println("Please enter hashtag/s:");
         String hashtag = scanner.nextLine();
-        hashtagList.addAll(Arrays.asList(hashtag.split("#")));
+        List<String> hashtagList = new ArrayList<>(Arrays.asList(hashtag.split("#")));
         noteList.add(new Note(title, body, System.currentTimeMillis(), System.currentTimeMillis(), false, hashtagList));
+
+        //TODO - fix adding hashtags
 
 //        String[] hashtags = input.nextLine().replace(" ", "").split(",");
 //        for (int i = 0; i < hashtags.length; i++) {
@@ -148,21 +157,25 @@ public class NoteApp {
     }
 
     private List<Note> searchNoteByTitle(String keyword) {
-        return new ArrayList<>(noteList.stream().filter(note -> note.getTitle().contains(keyword)).collect(Collectors.toSet()));
+        return new ArrayList<>((noteList.stream().filter(note -> note.getTitle().toLowerCase()
+                .contains(keyword.toLowerCase()))
+                .collect(Collectors.toList())));
     }
 
     private List<Note> searchNoteByKeyword(String keyword) {
-        return new ArrayList<>(noteList.stream().filter(note -> note.getBody().contains(keyword)).collect(Collectors.toSet()));
+        return new ArrayList<>(noteList.stream().filter(note -> note.getBody().toLowerCase()
+                .contains(keyword.toLowerCase()))
+                .collect(Collectors.toList()));
     }
 
     private List<Note> searchNoteByHashtag(String keyword) {
-        List<Note> tempList=new ArrayList<>();
+        List<Note> tempList = new ArrayList<>();
         for (Note note : noteList) {
             for (String hashtag : note.getHashtagList()) {
-                if (hashtag.equalsIgnoreCase(keyword)) {
-                    tempList.add(note);
-                } else {
-                    System.out.println("Your search didn't returned anything!");
+                if (hashtag.toLowerCase().contains(keyword.toLowerCase())) {
+                    if (!tempList.contains(note)){
+                        tempList.add(note);
+                    }
                 }
             }
         }
@@ -187,29 +200,32 @@ public class NoteApp {
 
     private Note selectNote(List<Note> notes) {
         for (int i = 0; i < notes.size(); i++) {
-            System.out.println((i + 1) + notes.get(0).getTitle());
+            System.out.println((i + 1) + " - " + notes.get(i).getTitle());
         }
         System.out.println("Please select one note:");
         int selectedNote = scanner.nextInt();
         return notes.get(selectedNote - 1);
     }
 
-    private List<Note> searchNotes(){
+    private List<Note> searchNotes() {
         printSearchMenu();
-        int option= scanner.nextInt();
+        int option = scanner.nextInt();
         String keyword;
-        switch (option){
+        switch (option) {
             case 1:
+                scanner.skip("\n");
                 System.out.println("Please enter title to search");
-                keyword=scanner.nextLine();
+                keyword = scanner.nextLine();
                 return searchNoteByTitle(keyword);
             case 2:
+                scanner.skip("\n");
                 System.out.println("Please enter hashtag to search");
-                keyword=scanner.nextLine();
+                keyword = scanner.nextLine();
                 return searchNoteByHashtag(keyword);
             case 3:
+                scanner.skip("\n");
                 System.out.println("Please enter keyword to search");
-                keyword=scanner.nextLine();
+                keyword = scanner.nextLine();
                 return searchNoteByKeyword(keyword);
             case 4:
                 openNoteApp();
@@ -219,34 +235,40 @@ public class NoteApp {
         return null;
     }
 
-    private void editNote(){
-        Note currentNote=selectNote(searchNotes());
+    private void editNote() {
+        Note currentNote = selectNote(Objects.requireNonNull(searchNotes()));
         printNoteEditMenu();
-        int option=scanner.nextInt();
+        int option = scanner.nextInt();
         String keyword;
-        switch (option){
+        switch (option) {
             case 1:
+                scanner.skip("\n");
                 System.out.println("Please enter new title");
-                keyword=scanner.nextLine();
-                editNoteTitle(currentNote,keyword);
+                keyword = scanner.nextLine();
+                editNoteTitle(currentNote, keyword);
                 break;
             case 2:
+                scanner.skip("\n");
                 System.out.println("Please enter new body");
-                keyword=scanner.nextLine();
-                editNoteBody(currentNote,keyword);
+                keyword = scanner.nextLine();
+                editNoteBody(currentNote, keyword);
                 break;
             case 3:
+                scanner.skip("\n");
                 System.out.println("Please enter hashtags");
-                keyword=scanner.nextLine();
-                editHashtag(currentNote,keyword);
+                keyword = scanner.nextLine();
+                editHashtag(currentNote, keyword);
                 break;
             case 4:
+                //TODO - delete note
+                break;
+            case 5:
                 openNoteApp();
                 break;
             default:
                 System.out.println("Error");
         }
-
     }
+
 
 }
