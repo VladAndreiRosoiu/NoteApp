@@ -21,8 +21,8 @@ public class IOServiceImpl implements IOService {
                 JSONObject noteObject = (JSONObject) object;
                 String title = (String) noteObject.get("title");
                 String body = (String) noteObject.get("body");
-                Long creationDate = (Long) noteObject.get("creationDate");
-                Long modificationDate = (Long) noteObject.get("modificationDate");
+                Long creationDate = (Long) noteObject.get("writeDate");
+                Long modificationDate = (Long) noteObject.get("modifiedOnDate");
                 Boolean markAsFinished = (Boolean) noteObject.get("markAsFinished");
                 List hashtagList = (List) noteObject.get("hashtagList");
                 Note note = new Note(title, body, creationDate, modificationDate, markAsFinished, hashtagList);
@@ -45,8 +45,8 @@ public class IOServiceImpl implements IOService {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("title", note.getTitle());
                     jsonObject.put("body", note.getBody());
-                    jsonObject.put("creationDate", note.getCreationDate());
-                    jsonObject.put("modificationDate", note.getModificationDate());
+                    jsonObject.put("writeDate", note.getWriteDate());
+                    jsonObject.put("modifiedOnDate", note.getModifiedOnDate());
                     jsonObject.put("markAsFinished", note.isMarkAsFinished());
                     jsonObject.put("hashtagList", note.getHashtagList());
                     jsonArray.add(jsonObject);

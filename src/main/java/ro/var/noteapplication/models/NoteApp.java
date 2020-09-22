@@ -79,8 +79,8 @@ public class NoteApp {
 
     private void printNoteAppDisplayMenu() {
         System.out.println("Display menu");
-        System.out.println("1 - Display notes by creation date(latest first)");
-        System.out.println("2 - Display notes by creation date(oldest first)");
+        System.out.println("1 - Display latest notes first");
+        System.out.println("2 - Display oldest notes first");
         System.out.println("3 - Display notes by edit date(latest first)");
         System.out.println("4 - Display notes by edit date(oldest first)");
         System.out.println("5 - Display unfinished notes");
@@ -185,18 +185,18 @@ public class NoteApp {
 
     private void editNoteTitle(Note note, String title) {
         note.setTitle(title);
-        note.setModificationDate(System.currentTimeMillis());
+        note.setModifiedOnDate(System.currentTimeMillis());
     }
 
     private void editNoteBody(Note note, String body) {
         note.setBody(body);
-        note.setModificationDate(System.currentTimeMillis());
+        note.setModifiedOnDate(System.currentTimeMillis());
     }
 
     private void editHashtag(Note note, String hashtag) {
         List<String> hashtags = new ArrayList<>(Arrays.asList(hashtag.split("#")));
         note.setHashtagList(hashtags);
-        note.setModificationDate(System.currentTimeMillis());
+        note.setModifiedOnDate(System.currentTimeMillis());
     }
 
     private Note selectNote(List<Note> notes) {

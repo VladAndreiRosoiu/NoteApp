@@ -11,28 +11,28 @@ public class SortingServiceImpl implements SortingService {
     @Override
     public List<Note> latestNotesFirst(List<Note> noteList) {
         List<Note> sortedList = new ArrayList<>(noteList);
-        sortedList.sort((note, t1) -> (int) (t1.getCreationDate() - note.getCreationDate()));
+        sortedList.sort((note, t1) -> (int) (t1.getWriteDate() - note.getWriteDate()));
         return sortedList;
     }
 
     @Override
     public List<Note> oldestNotesFirst(List<Note> noteList) {
         List<Note> sortedList = new ArrayList<>(noteList);
-        sortedList.sort((note, t1) -> (int) (note.getCreationDate() - t1.getCreationDate()));
+        sortedList.sort((note, t1) -> (int) (note.getWriteDate() - t1.getWriteDate()));
         return sortedList;
     }
 
     @Override
     public List<Note> latestEditedNotesFirst(List<Note> noteList) {
         List<Note> sortedList = new ArrayList<>(noteList);
-        sortedList.sort((note, t1) -> (int) (t1.getModificationDate() - note.getModificationDate()));
+        sortedList.sort((note, t1) -> (int) (t1.getModifiedOnDate() - note.getModifiedOnDate()));
         return sortedList;
     }
 
     @Override
     public List<Note> oldestEditedNotesFirst(List<Note> noteList) {
         List<Note> sortedList = new ArrayList<>(noteList);
-        sortedList.sort((note, t1) -> (int) (note.getModificationDate() - t1.getModificationDate()));
+        sortedList.sort((note, t1) -> (int) (note.getModifiedOnDate() - t1.getModifiedOnDate()));
         return sortedList;
     }
 

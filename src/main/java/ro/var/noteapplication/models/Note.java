@@ -9,8 +9,8 @@ public class Note {
 
     private String title;
     private String body;
-    private long creationDate;
-    private long modificationDate;
+    private long writeDate;
+    private long modifiedOnDate;
     private boolean markAsFinished;
     private List<String> hashtagList = new ArrayList<>();
 
@@ -20,8 +20,8 @@ public class Note {
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
-        this.creationDate = System.currentTimeMillis();
-        this.modificationDate = System.currentTimeMillis();
+        this.writeDate = System.currentTimeMillis();
+        this.modifiedOnDate = System.currentTimeMillis();
         this.markAsFinished = false;
         this.hashtagList = null;
     }
@@ -29,17 +29,17 @@ public class Note {
     public Note(String title, String body, List<String> hashtagList) {
         this.title = title;
         this.body = body;
-        this.creationDate = System.currentTimeMillis();
-        this.modificationDate = System.currentTimeMillis();
+        this.writeDate = System.currentTimeMillis();
+        this.modifiedOnDate = System.currentTimeMillis();
         this.markAsFinished = false;
         this.hashtagList = hashtagList;
     }
 
-    public Note(String title, String body, long creationDate, long modificationDate, boolean markAsFinished, List<String> hashtagList) {
+    public Note(String title, String body, long writeDate, long modifiedOnDate, boolean markAsFinished, List<String> hashtagList) {
         this.title = title;
         this.body = body;
-        this.creationDate = creationDate;
-        this.modificationDate = modificationDate;
+        this.writeDate = writeDate;
+        this.modifiedOnDate = modifiedOnDate;
         this.markAsFinished = markAsFinished;
         this.hashtagList = hashtagList;
     }
@@ -60,16 +60,16 @@ public class Note {
         this.body = body;
     }
 
-    public long getCreationDate() {
-        return this.creationDate;
+    public long getWriteDate() {
+        return this.writeDate;
     }
 
-    public long getModificationDate() {
-        return modificationDate;
+    public long getModifiedOnDate() {
+        return modifiedOnDate;
     }
 
-    public void setModificationDate(long modificationDate) {
-        this.modificationDate = modificationDate;
+    public void setModifiedOnDate(long modifiedOnDate) {
+        this.modifiedOnDate = modifiedOnDate;
     }
 
     public List<String> getHashtagList() {
@@ -93,8 +93,8 @@ public class Note {
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a | dd-MM-yyyy ");
         return title + "\n" +
-                "Created on: " + sdf.format(creationDate) + "\n" +
-                "Last modified on: " + sdf.format(modificationDate) + "\n" +
+                "Created on: " + sdf.format(writeDate) + "\n" +
+                "Last modified on: " + sdf.format(modifiedOnDate) + "\n" +
                 body + "\n" +
                 "Note is marked as done: " + markAsFinished + "\n" +
                 "Hashtags " + hashtagList.toString() + "." + "\n\n";
@@ -105,8 +105,8 @@ public class Note {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
-        return creationDate == note.creationDate &&
-                modificationDate == note.modificationDate &&
+        return writeDate == note.writeDate &&
+                modifiedOnDate == note.modifiedOnDate &&
                 markAsFinished == note.markAsFinished &&
                 Objects.equals(title, note.title) &&
                 Objects.equals(body, note.body) &&
@@ -115,6 +115,6 @@ public class Note {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, body, creationDate, modificationDate, markAsFinished, hashtagList);
+        return Objects.hash(title, body, writeDate, modifiedOnDate, markAsFinished, hashtagList);
     }
 }
