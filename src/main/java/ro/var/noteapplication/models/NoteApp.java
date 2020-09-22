@@ -200,7 +200,7 @@ public class NoteApp {
 
     private Note selectNote(List<Note> notes) {
         for (int i = 0; i < notes.size(); i++) {
-            System.out.println((i + 1) + " - " + notes.get(i).getTitle());
+            System.out.println((i + 1) + " - " + notes.get(i));
         }
         System.out.println("Please select one note:");
         int selectedNote = scanner.nextInt();
@@ -269,6 +269,5 @@ public class NoteApp {
                 System.out.println("Error");
         }
     }
-
 
 }
