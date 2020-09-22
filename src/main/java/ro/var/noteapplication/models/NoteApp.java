@@ -93,6 +93,7 @@ public class NoteApp {
         System.out.println("1 - Edit title");
         System.out.println("2 - Edit body");
         System.out.println("3 - Edit hashtag list");
+        System.out.println("4 - Mark note as finished");
         System.out.println("4 - Delete note");
         System.out.println("5 - Return to main menu");
         System.out.println("Please enter an option:");
@@ -162,7 +163,7 @@ public class NoteApp {
                 .collect(Collectors.toList())));
     }
 
-    private List<Note> searchNoteByKeyword(String keyword) {
+    private List<Note> searchNoteByBodyKeyword(String keyword) {
         return new ArrayList<>(noteList.stream().filter(note -> note.getBody().toLowerCase()
                 .contains(keyword.toLowerCase()))
                 .collect(Collectors.toList()));
@@ -226,7 +227,7 @@ public class NoteApp {
                 scanner.skip("\n");
                 System.out.println("Please enter keyword to search");
                 keyword = scanner.nextLine();
-                return searchNoteByKeyword(keyword);
+                return searchNoteByBodyKeyword(keyword);
             case 4:
                 openNoteApp();
             default:
@@ -237,6 +238,7 @@ public class NoteApp {
 
     private void editNote() {
         Note currentNote = selectNote(Objects.requireNonNull(searchNotes()));
+        System.out.println("Selected note is:" + currentNote);
         printNoteEditMenu();
         int option = scanner.nextInt();
         String keyword;
@@ -260,9 +262,12 @@ public class NoteApp {
                 editHashtag(currentNote, keyword);
                 break;
             case 4:
-                //TODO - delete note
+                //TODO - mark note as finished
                 break;
             case 5:
+                //TODO - delete note
+                break;
+            case 6:
                 openNoteApp();
                 break;
             default:

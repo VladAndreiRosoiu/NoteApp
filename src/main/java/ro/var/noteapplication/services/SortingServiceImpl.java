@@ -38,6 +38,6 @@ public class SortingServiceImpl implements SortingService {
 
     @Override
     public List<Note> unfinishedNotes(List<Note> noteList) {
-        return new ArrayList<>(noteList.stream().filter(note -> !note.isMarkAsFinished()).collect(Collectors.toSet()));
+        return new ArrayList<>(noteList.stream().filter(note -> !note.isMarkAsFinished()).collect(Collectors.toList()));
     }
 }
